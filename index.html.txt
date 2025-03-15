@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditron AI - Intelligent CA Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom Styles */
+        .bg-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        }
+        .chat-container {
+            height: 400px;
+            transition: all 0.3s ease;
+        }
+        .chat-container.minimized {
+            height: 0;
+        }
+        .chat-message {
+            max-width: 80%;
+            border-radius: 20px;
+        }
+        .user-message {
+            border-top-right-radius: 5px;
+        }
+        .bot-message {
+            border-top-left-radius: 5px;
+        }
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 350px;
+            transition: all 0.3s ease;
+        }
+        .chat-widget.minimized .chat-header {
+            border-radius: 10px;
+        }
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #6366F1;
+            border-radius: 50%;
+            display: inline-block;
+            opacity: 0.4;
+        }
+        .typing-indicator span:nth-child(1) {
+            animation: pulse 1s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation: pulse 1s infinite 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation: pulse 1s infinite 0.4s;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        .testimonial-card {
+            transition: all 0.3s ease;
+        }
+        .testimonial-card:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="bg-indigo-600 text-white rounded-full w-10 h-10 flex items-center justify-center mr-2">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-800">Auditron AI</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-indigo-600">Features</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-indigo-600">How It Works</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-indigo-600">Testimonials</a>
+                    <a href="#contact" class="text-gray-600 hover:text-indigo-600">Contact</a>
+                    <button id="openChatBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md">
+                        Start Chat
+                    </button>
+                </div>
+                <div class="flex md:hidden items-center">
+                    <button class="text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl font-bold mb-4">Transforming CA Firm Operations with AI</h1>
+                    <p class="text-xl mb-8">Auditron AI automates client interactions, document preparation, and administrative workflows, allowing CAs to focus on high-value advisory services.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button id="heroStartChat" class="bg-white text-indigo-600 py-3 px-6 rounded-md font-medium hover:bg-gray-100 transition">
+                            Chat with Auditron
+                        </button>
+                        <a href="#how-it-works" class="border border-white text-white py-3 px-6 rounded-md font-medium hover:bg-white hover:text-indigo-600 transition text-center">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <img src="/api/placeholder/600/400" alt="Auditron AI Dashboard" class="rounded-lg shadow-xl" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800">Powerful Features</h2>
+                <p class="mt-4 text-xl text-gray-600">Streamline your CA practice with intelligent automation</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-comments text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Intelligent Client Interaction</h3>
+                    <p class="text-gray-600">Natural conversation flow that collects all required information through an intuitive chat interface available 24/7.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-file-alt text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Automated Document Generation</h3>
+                    <p class="text-gray-600">Creates professional documents, certificates, and letters following ICAI guidelines based on client requirements.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-envelope text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Streamlined Communication</h3>
+                    <p class="text-gray-600">Delivers comprehensive summaries and draft documents to CAs for expert review and finalization.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-calendar-check text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Efficient Workflow Management</h3>
+                    <p class="text-gray-600">Manages client requests from initial contact to document delivery, eliminating administrative bottlenecks.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-shield-alt text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Secure Information Handling</h3>
+                    <p class="text-gray-600">Protects sensitive client information with enterprise-grade security and encryption protocols.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm feature-card">
+                    <div class="text-indigo-600 mb-4"><i class="fas fa-chart-line text-4xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Enhanced Productivity</h3>
+                    <p class="text-gray-600">Reduces administrative tasks by 70%, allowing CAs to focus on high-value professional services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800">How Auditron AI Works</h2>
+                <p class="mt-4 text-xl text-gray-600">A seamless process from client request to document delivery</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="space-y-12">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-600 text-white">
+                                    <span class="text-lg font-bold">1</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-800">Client Initiates Contact</h3>
+                                <p class="mt-2 text-gray-600">Client connects through chat interface and shares their requirement for a certificate, report, or letter.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-600 text-white">
+                                    <span class="text-lg font-bold">2</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-800">Information Collection</h3>
+                                <p class="mt-2 text-gray-600">AI assistant conducts a structured conversation to gather all necessary details and requirements.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-600 text-white">
+                                    <span class="text-lg font-bold">3</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-800">Document Generation</h3>
+                                <p class="mt-2 text-gray-600">System automatically creates appropriate professional documents following ICAI guidelines.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-600 text-white">
+                                    <span class="text-lg font-bold">4</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-800">CA Review & Delivery</h3>
+                                <p class="mt-2 text-gray-600">CA receives notification with draft documents for expert review, finalization, and client delivery.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <img src="/api/placeholder/500/400" alt="Auditron AI Workflow" class="w-full rounded-lg" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800">What Our Clients Say</h2>
+                <p class="mt-4 text-xl text-gray-600">Success stories from accounting professionals using Auditron AI</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm testimonial-card">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-800">Rajesh Sharma</h4>
+                            <p class="text-gray-600 text-sm">Managing Partner, RS Associates</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"Auditron AI has revolutionized how we handle client requests. What used to take hours of back-and-forth communication now happens seamlessly in minutes, allowing our team to focus on value-added services."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm testimonial-card">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-800">Priya Mehta</h4>
+                            <p class="text-gray-600 text-sm">Director, PM Consultants</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"The document generation capabilities are impressive. All certificates and reports follow ICAI guidelines perfectly, saving us countless hours of formatting and checking. Our clients are impressed with the quick turnaround time."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm testimonial-card">
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-800">Anil Kapoor</h4>
+                            <p class="text-gray-600 text-sm">Senior CA, AK & Associates</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"As a small practice, Auditron AI has allowed us to scale our services without adding staff. The automation handles routine tasks while maintaining professional standards, and clients appreciate the immediate responses to their inquiries."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800">Get Started Today</h2>
+                <p class="mt-4 text-xl text-gray-600">Transform your CA practice with Auditron AI</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Contact Us</h3>
+                    <form class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" id="name" name="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 border">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="email" name="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 border">
+                        </div>
+                        <div>
+                            <label for="firm" class="block text-sm font-medium text-gray-700">Firm Name</label>
+                            <input type="text" id="firm" name="firm" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 border">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                            <textarea id="message" name="message" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 border"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Schedule a Demo</h3>
+                    <p class="text-gray-600 mb-6">See Auditron AI in action with a personalized demonstration for your firm. Our team will show you how to:</p>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Integrate Auditron AI with your existing systems
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Customize templates for your specific practice needs
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Train your team to maximize productivity gains
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Measure ROI and performance improvements
+                        </li>
+                    </ul>
+                    <div class="mt-8">
+                        <button type="button" class="w-full py-3 px-4 border border-indigo-600 rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Book Your Free Demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-white text-indigo-600 rounded-full w-10 h-10 flex items-center justify-center mr-2">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <span class="text-xl font-bold">Auditron AI</span>
+                    </div>
+                    <p class="text-gray-400">Transforming CA firm operations through intelligent automation.</p>
+                    <div class="mt-4 flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-white">How It Works</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-white">Testimonials</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            info@auditronai.com
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2"></i>
+                            +91 9876543210
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Mumbai, India
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Stay updated with the latest features and releases.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-md w-full focus:outline-none text-gray-800">
+                        <button type="submit" class="bg-indigo-600 px-4 py-2 rounded-r-md hover:bg-indigo-700">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Auditron AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget minimized" id="chatWidget">
+        <div class="chat-header bg-indigo-600 text-white p-4 rounded-t-lg flex justify-between items-center cursor-pointer" id="chatHeader">
+            <div class="flex items-center">
+                <div class="bg-white text-indigo-600 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <span class="font-bold">Auditron AI Assistant</span>
+            </div>
+            <button id="toggleChatBtn" class="text-white focus:outline-none">
+                <i class="fas fa-chevron-up" id="chatToggleIcon"></i>
+            </button>
+        </div>
+        
+        <div class="chat-body bg-white rounded-b-lg shadow-lg overflow-hidden">
+            <div class="bg-gray-50 p-4 overflow-y-auto chat-container" id="chatContainer">
+                <!-- Bot Welcome Message -->
+                <div class="flex mb-4">
+                    <div class="bg-indigo-100 p-3 text-indigo-800 rounded-lg shadow-sm chat-message bot-message">
+                        <p>Hello! Welcome to Auditron AI. I can help you with certification, reports, and letters. How may I assist you today?</p>
+                    </div>
+                </div>
+                
+                <!-- Typing Indicator (initially hidden) -->
+                <div class="flex mb-4 hidden" id="typingIndicator">
+                    <div class="bg-indigo-100 p-3 rounded-lg shadow-sm chat-message bot-message">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input Area -->
+            <div class="bg-white p-4 border-t">
+                <form id="chatForm" class="flex items-center">
+                    <input type="text" id="userInput" placeholder="Type your message here..." class="flex-grow p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="bg-indigo-600 text-white p-3 rounded-r-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chat Widget Toggle
+            const chatWidget = document.getElementById('chatWidget');
+            const chatHeader = document.getElementById('chatHeader');
+            const chatToggleIcon = document.getElementById('chatToggleIcon');
+            const chatContainer = document.getElementById('chatContainer');
+            const openChatBtn = document.getElementById('openChatBtn');
+            const heroStartChat = document.getElementById('heroStartChat');
+            const chatForm = document.getElementById('chatForm');
+            const userInput = document.getElementById('userInput');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            // Generate or retrieve session ID
+            function generateSessionId() {
+                if (!localStorage.getItem('chatSessionId')) {
+                    localStorage.setItem('chatSessionId', Date.now().toString());
+                }
+                return localStorage.getItem('chatSessionId');
+            }
+            
+            // Function to connect to n8n webhook
+            async function sendToWebhook(message) {
+                // Replace this URL with your actual n8n webhook URL
+                const webhookUrl = 'https://your-n8n-instance.com/webhook/auditron-webhook';
+                
+                try {
+                    // Show typing indicator while waiting for response
+                    showTypingIndicator();
+                    
+                    // Create a payload matching the Telegram structure for compatibility with your n8n workflow
+                    const payload = {
+                        message: {
+                            text: message,
+                            from: {
+                                id: generateSessionId()
+                            },
+                            chat: {
+                                id: generateSessionId()
+                            }
+                        }
+                    };
+                    
+                    // Send request to webhook
+                    const response = await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    
+                    // Check if request was successful
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    // Parse response
+                    const data = await response.json();
+                    
+                    // Hide typing indicator
+                    hideTypingIndicator();
+                    
+                    // Return the output from n8n
+                    return data.output || "I'm sorry, there was an issue processing your request.";
+                } catch (error) {
+                    console.error('Error sending to webhook:', error);
+                    hideTypingIndicator();
+                    return "Sorry, I'm having trouble connecting to the server. Please try again later.";
+                }
+            }
+            
+            // Add a user message to the chat
+            function addUserMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex mb-4 justify-end';
+                messageDiv.innerHTML = `
+                    <div class="bg-indigo-600 p-3 text-white rounded-lg shadow-sm chat-message user-message">
+                        <p>${message}</p>
+                    </div>
+                `;
+                chatContainer.insertBefore(messageDiv, typingIndicator);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Add a bot message to the chat
+            function addBotMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex mb-4';
+                messageDiv.innerHTML = `
+                    <div class="bg-indigo-100 p-3 text-indigo-800 rounded-lg shadow-sm chat-message bot-message">
+                        <p>${message}</p>
+                    </div>
+                `;
+                chatContainer.insertBefore(messageDiv, typingIndicator);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Show typing indicator
+            function showTypingIndicator() {
+                typingIndicator.classList.remove('hidden');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Hide typing indicator
+            function hideTypingIndicator() {
+                typingIndicator.classList.add('hidden');
+            }
+            
+            // Toggle chat widget
+            function toggleChatWidget() {
+                chatWidget.classList.toggle('minimized');
+                chatContainer.classList.toggle('minimized');
+                
+                if (chatWidget.classList.contains('minimized')) {
+                    chatToggleIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    chatToggleIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    userInput.focus();
+                }
+            }
+            
+            // Open chat widget
+            function openChatWidget() {
+                if (chatWidget.classList.contains('minimized')) {
+                    toggleChatWidget();
+                }
+            }
+            
+            // Event listeners
+            chatHeader.addEventListener('click', toggleChatWidget);
+            openChatBtn.addEventListener('click', openChatWidget);
+            heroStartChat.addEventListener('click', openChatWidget);
+            
+            // Handle form submission
+            chatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addUserMessage(message);
+                userInput.value = '';
+                
+                // Get response from webhook
+                const response = await sendToWebhook(message);
+                
+                // Add bot response
+                addBotMessage(response);
+            });
+            
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
