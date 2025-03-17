@@ -528,13 +528,14 @@
                 return localStorage.getItem('chatSessionId');
             }
             
-// Function to connect to n8n webhook
+            // Function to connect to n8n webhook
             async function sendToWebhook(message) {
-                // Replace this URL with your actual n8n webhook URL
                 const webhookUrl = 'https://vishnuairesearch.app.n8n.cloud/webhook/cbc66fa4-df75-4630-afa8-0f6876a1ee84';
                 
                 try {
-                    // Create a payload matching the Telegram structure for compatibility with your n8n workflow
+                    console.log('Sending message to webhook:', message);
+                    
+                    // Create payload
                     const payload = {
                         message: {
                             text: message,
@@ -547,32 +548,47 @@
                         }
                     };
                     
-                    // Send request to webhook
+                    console.log('Payload:', JSON.stringify(payload));
+                    
+                    // Send request with mode: 'cors' explicitly set
                     const response = await fetch(webhookUrl, {
                         method: 'POST',
+                        mode: 'cors', // Add this line
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(payload),
                     });
                     
+                    console.log('Response status:', response.status);
+                    
                     // Check if request was successful
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
-                    // Parse response
-                    const data = await response.json();
+                    // Parse response as text first to debug
+                    const rawText = await response.text();
+                    console.log('Raw response:', rawText);
+                    
+                    // Parse as JSON if possible
+                    let data;
+                    try {
+                        data = JSON.parse(rawText);
+                    } catch (e) {
+                        console.error('Failed to parse response as JSON:', e);
+                        return rawText || "Received response but couldn't parse it.";
+                    }
+                    
+                    console.log('Parsed response data:', data);
                     
                     // Return the output from n8n
                     return data.output || "I'm sorry, there was an issue processing your request.";
                 } catch (error) {
-                    console.error('Error sending to webhook:', error);
+                    console.error('Error details:', error);
                     return "Sorry, I'm having trouble connecting to the server. Please try again later.";
                 }
-            }
-            
-            // Add a user message to the chat
+            }            // Add a user message to the chat
             function addUserMessage(message) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'flex mb-4 justify-end';
