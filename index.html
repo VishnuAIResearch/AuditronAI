@@ -578,7 +578,7 @@
                 }
             }
             
-            // Add a user message to the chat
+           // Fix the user message display function
             function addUserMessage(message) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'flex mb-4 justify-end';
@@ -587,10 +587,41 @@
                         <p>${message}</p>
                     </div>
                 `;
+                // Insert the message before the typing indicator
                 chatContainer.insertBefore(messageDiv, typingIndicator);
+                // Scroll to the bottom of the chat container
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
             
+            // Handle form submission
+            chatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addUserMessage(message);
+                userInput.value = '';
+                
+                // Show typing indicator while "waiting" for response
+                showTypingIndicator();
+                
+                try {
+                    // Get response from webhook
+                    const response = await sendToWebhook(message);
+                    
+                    // Hide typing indicator
+                    hideTypingIndicator();
+                    
+                    // Add bot response
+                    addBotMessage(response);
+                } catch (error) {
+                    console.error('Error getting response:', error);
+                    hideTypingIndicator();
+                    addBotMessage("Sorry, I'm having trouble connecting to the server. Please try again later.");
+                }
+            });            
             // Add a bot message to the chat
             function addBotMessage(message) {
                 const messageDiv = document.createElement('div');
